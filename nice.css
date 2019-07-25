@@ -138,8 +138,8 @@
 }
 .ais-Pagination-item--selected .ais-Pagination-link {
     color:#fff;
-    background-color:#0096db;
-    border-color:#0096db
+    background-color:#B387FF;
+    border-color:#B387FF
 }
 .ais-Pagination-item--selected .ais-Pagination-link:focus,
 .ais-Pagination-item--selected .ais-Pagination-link:hover {
@@ -219,4 +219,26 @@
     width:16px;
     height:16px
 }
+
+
+.ais-PoweredBy {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center; }
+
+.ais-PoweredBy-logo {
+    display: block;
+    height: 1.2em;
+    width: auto; }
+
+.ais-PoweredBy {
+    color: #3a4570; }
+.ais-PoweredBy-text{
+    font-size: 0.8rem; }
+
+.ais-PoweredBy-logo {
+    margin-left: 0.3rem; }
 

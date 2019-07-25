@@ -32,4 +32,11 @@ search.addWidget(
     })
 );
 
+search.addWidget(
+    instantsearch.widgets.poweredBy({
+        container: '#powered-by',
+    })
+);
+
+
 search.start();
