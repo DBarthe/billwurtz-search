@@ -1,0 +1,20 @@
+{
+  "name": "billwurtz-qa-machinery",
+  "version": "1.0.0",
+  "description": "yes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "#slowdown"
+  ],
+  "author": "dbarthe",
+  "license": "ISC",
+  "dependencies": {
+    "algoliasearch": "^3.33.0",
+    "js-sha1": "^0.6.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7"
+  }
+}
