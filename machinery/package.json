@@ -12,7 +12,7 @@
   "author": "dbarthe",
   "license": "ISC",
   "dependencies": {
-    "algoliasearch": "^3.33.0",
+    "@elastic/elasticsearch": "^7.10.0",
     "js-sha1": "^0.6.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7"
