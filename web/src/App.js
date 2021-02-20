@@ -12,9 +12,23 @@ class App extends Component {
         app="qa"
         index="qa"
         url="http://localhost:3000"
-        headers={{
-          Authorization:
-            `ApiKey ${process.env.REACT_APP_ELASTIC_API_KEY}`,
+        transformRequest={props => {
+          console.log(props);
+          // body is msearch (one header line + 1 line per search query), we use only the 1st query and parse it as json
+          const body = JSON.parse(props.body.substring(props.body.indexOf("\n") + 1).trim());
+          console.log(body);
+
+          props.body = JSON.stringify({
+            from: body.from || 0,
+            size: body.size || 10,
+            term: body.term || ''
+          });
+
+          props.headers['Content-Type'] = 'application/json';
+          
+          props.url = props.url.replace('qa/_msearch', 'search')
+
+          return props;
         }}
         theme={{
           typography: {
@@ -47,9 +61,13 @@ class App extends Component {
               number_of_fragments: 0,
             },
           })}
+          customQuery={(term) => ({
+            term
+          })}
         />
         <ReactiveList
           componentId="searchresults"
+          dataField="content_html"
           react={{
             and: ["searchbox"],
           }}

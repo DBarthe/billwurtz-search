@@ -1,8 +1,11 @@
 version: '2.2'
 
+# sudo sysctl -w vm.max_map_count=262144
+
 # https://www.elastic.co/guide/en/elastic-stack-get-started/current/get-started-docker.html
 
 # docker-compose -f create-certs.yml run --rm create_certs
+# docker exec es01 /bin/bash -c "cat /usr/share/elasticsearch/config/certificates/ca/ca.crt" >> cacert.pem
 # docker exec es01 /bin/bash -c "bin/elasticsearch-setup-passwords auto --batch --url https://es01:9200"
 
 services:
@@ -27,9 +30,6 @@ services:
       - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
       - xpack.security.transport.ssl.certificate=$CERTS_DIR/es01/es01.crt
       - xpack.security.transport.ssl.key=$CERTS_DIR/es01/es01.key
-      - VIRTUAL_PROTO=https
-      - VIRTUAL_HOST=$ELASTIC_DOMAIN
-      - VIRTUAL_PORT=9200
     ulimits:
       memlock:
         soft: -1
@@ -37,8 +37,8 @@ services:
     volumes:
       - data01:/usr/share/elasticsearch/data
       - certs:$CERTS_DIR
-    expose:
-      - 9200
+    ports:
+      - 9200:9200
     networks:
       - elastic
 
@@ -70,46 +70,11 @@ services:
     networks:
       - elastic
 
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - conf:/etc/nginx/conf.d
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - dhparam:/etc/nginx/dhparam
-      - certs:/etc/nginx/certs:ro
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-    networks:
-      - elastic
-
-  letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: nginx-proxy-le
-    volumes_from:
-      - nginx-proxy
-    volumes:
-      - certs:/etc/nginx/certs:rw
-      - acme:/etc/acme.sh
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - elastic
-
 volumes:
   data01:
     driver: local
   certs:
     driver: local
-  conf:
-  vhost:
-  html:
-  dhparam:
-  certs:
-  acme:
-
 
 networks:
   elastic:
