@@ -88,17 +88,21 @@ const monthlyUrl = (year, month) =>
 const getMonthlyPage = (year, month) => getPage(monthlyUrl(year, month));
 
 const parseDate = (itemHtml) => {
-  const regexDate = /([1-9]|1[012])\.([1-9]|[0-2][0-9]|3[01])\.([12][0-9])[\s\S]*[^0-9]([0-9]|1[012]):(?:[\s\S]*[^0-9])?([0-9]|[0-5][0-9]) (am|apm|pm)/;
+  const regexDate = /([1-9]|1[012])\.([1-9]|[0-2][0-9]|3[01]|120)\.([12][0-9])[\s\S]*[^0-9]([0-9]|1[012]):(?:[\s\S]*[^0-9])?([0-9]|[0-5][0-9]) (am|apm|pm)/;
   const matchDate = regexDate.exec(itemHtml.replace(/&nbsp;/g, " "));
   if (matchDate === null) {
     throw Error(`cannot parse date in : ${itemHtml}, match was : ${matchDate}`);
   }
   const year = 2000 + parseInt(matchDate[3]);
   const month = parseInt(matchDate[1]) - 1;
-  const day = parseInt(matchDate[2]);
+  let day = parseInt(matchDate[2]);
   const half = matchDate[6];
   const hour = parseInt(matchDate[4]) + (half === "pm" ? 12 : 0);
   const minute = parseInt(matchDate[5]);
+
+  if (day == 120) {
+    day %= 20; // custom fix
+  }
 
   if (year > 2021) {
     throw Error(`cannot parse date in : ${itemHtml}, match was : ${matchDate}`); 
