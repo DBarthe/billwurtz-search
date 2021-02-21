@@ -140,7 +140,7 @@ const parsePage = (html) => {
   );
 
   // split into a list of question
-  const list = html.split("</br></br><h3>");
+  const list = html.split("</br></br><h3");
 
   // remove the head of page
   list.shift();
@@ -148,10 +148,10 @@ const parsePage = (html) => {
   return list
     .map((itemHtml) => itemHtml.trim())
     .map((itemHtml) => {
-      if (itemHtml.startsWith("<h3>") || itemHtml.startsWith("<H3>")) {
+      if (itemHtml.startsWith("<h3") || itemHtml.startsWith("<H3")) {
         return itemHtml
       }
-      return "<h3>" + itemHtml;
+      return "<h3" + itemHtml;
     })
     .map((itemHtml) => {
       if (false && itemHtml.length >= 10240 - 100) {
