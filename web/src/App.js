@@ -11,7 +11,7 @@ class App extends Component {
       <ReactiveBase
         app="qa"
         index="qa"
-        url="http://localhost:3000"
+        url="https://api.billwurtz-search.com"
         transformRequest={props => {
           console.log(props);
           // body is msearch (one header line + 1 line per search query), we use only the 1st query and parse it as json
