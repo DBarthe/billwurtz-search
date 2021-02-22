@@ -15,6 +15,7 @@
     "@elastic/elasticsearch": "^7.10.0",
     "dotenv": "^8.2.0",
     "js-sha1": "^0.6.0",
+    "node-telegram-bot-api": "^0.51.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7"
   }

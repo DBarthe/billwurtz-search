@@ -4,11 +4,15 @@ const sha1 = require("js-sha1");
 const fs = require("fs");
 const path = require("path");
 const { Client: ESClient } = require("@elastic/elasticsearch");
+const TelegramBot = require("node-telegram-bot-api");
 
 const elasticUrl = process.env.ELASTIC_URL || "https://localhost:9200";
 const elasticApiKey = process.env.ELASTIC_API_KEY;
 const recreateIndex =
   process.env.RECREATE_INDEX && process.env.RECREATE_INDEX === "true";
+
+const telegramToken = process.env.TELEGRAM_TOKEN || null;
+const telegramChatId = process.env.TELEGRAM_CHAT_ID || null;
 
 const indexConfig = {
   mappings: {
@@ -58,6 +62,10 @@ const esClient = new ESClient({
   },
 });
 
+const telegramBot = telegramToken
+  ? new TelegramBot(telegramToken, { polling: false })
+  : null;
+
 const cacheDir = "./tmp";
 if (!fs.existsSync(cacheDir)) {
   fs.mkdirSync(cacheDir);
@@ -105,16 +113,13 @@ const parseDate = (itemHtml) => {
   }
 
   if (year > 2021) {
-    throw Error(`cannot parse date in : ${itemHtml}, match was : ${matchDate}`); 
+    throw Error(`cannot parse date in : ${itemHtml}, match was : ${matchDate}`);
   }
 
   const date = new Date(year, month, day, hour, minute);
 
-  console.log(date);
-
   return date;
 };
-
 
 const parsePage = (html) => {
   // remove the bottom of page
@@ -149,7 +154,7 @@ const parsePage = (html) => {
     .map((itemHtml) => itemHtml.trim())
     .map((itemHtml) => {
       if (itemHtml.startsWith("<h3") || itemHtml.startsWith("<H3")) {
-        return itemHtml
+        return itemHtml;
       }
       return "<h3" + itemHtml;
     })
@@ -219,6 +224,24 @@ const syncLatest = async () => {
   return records.length;
 };
 
+const getLastMonthAndYear = async () => {
+  const html = await getLatestPage();
+
+  const match = html.match(
+    /<a href="questions-(\d\d\d\d)-(\d\d)\.html">PREVIOUS QUESTIONS<\/a>/
+  );
+  if (match === null) {
+    throw new Error("canno't extract the last month and year");
+  }
+
+  const year = parseInt(match[1]);
+  const month = parseInt(match[2]);
+
+  console.log("found last month and year = ", month, year);
+
+  return [month, year];
+};
+
 const syncSpecificMonth = async (year, month) => {
   const html = await getMonthlyPage(year, month);
   const records = parsePage(html);
@@ -281,10 +304,26 @@ const main = async () => {
 
     let total = 0;
     total += await syncLatest();
-    total += await syncFromAncientTimes(2021, 01);
+
+    const [month, year] = await getLastMonthAndYear();
+
+    total += await syncFromAncientTimes(year, month);
     console.log("total = ", total);
+
+    if (telegramToken) {
+      await telegramBot.sendMessage(
+        telegramChatId,
+        "billwurtz-search has been updated succesfully"
+      );
+    }
   } catch (e) {
     console.error(e);
+    if (telegramToken) {
+      await telegramBot.sendMessage(
+        telegramChatId,
+        `An error occured when updating billwurtz-search, cause :\n${e}\nplease check <3`
+      );
+    }
   }
 };
 
