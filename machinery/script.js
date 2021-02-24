@@ -22,13 +22,7 @@ const indexConfig = {
       },
       content_html: {
         type: "text",
-        analyzer: "my_analyzer",
-        fields: {
-          keyword: {
-            type: "keyword",
-            ignore_above: 256,
-          },
-        },
+        analyzer: "my_analyzer"
       },
     },
   },

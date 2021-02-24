@@ -18,7 +18,7 @@ const esClient = new ESClient({
 
 const validateRequest = (req) => {
   const { body } = req;
-  
+
   if (body === undefined || typeof body !== "object") {
     return false;
   }
@@ -61,9 +61,7 @@ const buildQuery = (req) => {
   };
 
   if (body.term === "") {
-    theQuery.sort = [
-      { date: "desc" }
-    ]
+    theQuery.sort = [{ date: "desc" }];
   }
 
   if (body.term !== "") {
@@ -81,6 +79,7 @@ const buildQuery = (req) => {
                           content_html: {
                             query: body.term,
                             fuzziness: 0,
+                            boost: 1
                           },
                         },
                       },
@@ -88,7 +87,15 @@ const buildQuery = (req) => {
                         match_phrase: {
                           content_html: {
                             query: body.term,
-                            boost: 10
+                            boost: 10,
+                          },
+                        },
+                      },
+                      {
+                        match_phrase_prefix: {
+                          content_html: {
+                            query: body.term,
+                            boost: 5
                           },
                         },
                       },
@@ -105,14 +112,11 @@ const buildQuery = (req) => {
   }
 
   return theQuery;
-
 };
-
 
 app.use(express.json());
 
 app.use("/search", async (req, res) => {
-
   console.log("Verifying requests ✔", req.body);
 
   if (!validateRequest(req)) {
