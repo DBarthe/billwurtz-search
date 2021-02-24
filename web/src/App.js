@@ -82,8 +82,8 @@ class App extends Component {
             <p style={{ fontSize: "0.83em" }}>{`${
               stats.numberOfResults < 10000
                 ? stats.numberOfResults
-                : "More than 10000"
-            } results founds in ${stats.time} ms.`}</p>
+                : "A lot of "
+            } results founds.`}</p>
           )}
           renderNoResults={() => (
             <p style={{ fontSize: "0.83em" }}>No results found.</p>
