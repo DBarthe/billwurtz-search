@@ -6,7 +6,9 @@ const path = require("path");
 const { Client: ESClient } = require("@elastic/elasticsearch");
 const TelegramBot = require("node-telegram-bot-api");
 
-const elasticUrl = process.env.ELASTIC_URL || "https://localhost:9200";
+//const elasticUrl = process.env.ELASTIC_URL || "https://localhost:9200";
+const elasticUrl = process.env.ELASTIC_URL || "http://localhost:9200";
+
 const elasticApiKey = process.env.ELASTIC_API_KEY;
 const recreateIndex =
   process.env.RECREATE_INDEX && process.env.RECREATE_INDEX === "true";
@@ -48,13 +50,17 @@ const indexConfig = {
 
 const esClient = new ESClient({
   node: elasticUrl,
-  auth: {
-    apiKey: elasticApiKey,
-  },
-  ssl: {
-    ca: fs.readFileSync("./cacert.pem"),
-  },
 });
+
+// const esClient = new ESClient({
+//   node: elasticUrl,
+//   auth: {
+//     apiKey: elasticApiKey,
+//   },
+//   ssl: {
+//     ca: fs.readFileSync("./cacert.pem"),
+//   },
+// });
 
 const telegramBot = telegramToken
   ? new TelegramBot(telegramToken, { polling: false })

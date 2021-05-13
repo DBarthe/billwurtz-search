@@ -7,14 +7,18 @@ const app = express();
 const { Client: ESClient } = require("@elastic/elasticsearch");
 
 const esClient = new ESClient({
-  node: "https://localhost:9200",
-  auth: {
-    apiKey: process.env.ELASTIC_API_KEY,
-  },
-  ssl: {
-    ca: fs.readFileSync("./cacert.pem"),
-  },
+  node: "http://localhost:9200",
 });
+
+// const esClient = new ESClient({
+//   node: "https://localhost:9200",
+//   auth: {
+//     apiKey: process.env.ELASTIC_API_KEY,
+//   },
+//   ssl: {
+//     ca: fs.readFileSync("./cacert.pem"),
+//   },
+// });
 
 const validateRequest = (req) => {
   const { body } = req;
