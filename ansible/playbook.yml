@@ -1,0 +1,10 @@
+- name: install backend
+  hosts: backend
+  become: yes
+  roles:    
+    - elastic.elasticsearch
+    - geerlingguy.kibana
+    - nginx
+    - geerlingguy.nodejs
+    - app
+    - filebeat

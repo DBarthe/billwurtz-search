@@ -1,0 +1,15 @@
+[Unit]
+Description=hello_env.js - making your environment variables rad
+Documentation=https://example.com
+After=network.target
+
+[Service]
+Type=simple
+User=centos
+WorkingDirectory=/opt/app/api
+ExecStart=/usr/bin/node index.js
+Restart=on-failure
+
+
+[Install]
+WantedBy=multi-user.target

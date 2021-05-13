@@ -1,0 +1,10 @@
+---
+roles:
+  - name:  elastic.elasticsearch
+    version: v7.12.1
+  - name: geerlingguy.kibana
+    version: 4.0.1
+  - name:  geerlingguy.nodejs
+    version: 5.1.1
+
+

@@ -1,0 +1,60 @@
+---
+- name: install git
+  package:
+    name: git
+    state: present
+
+- name: Create a directory if it does not exist
+  file:
+    path: /opt/app
+    state: directory
+    mode: '0755'
+    owner: centos
+    group: centos
+
+- name: checkout repository
+  git:
+    repo: https://github.com/DBarthe/billwurtz-search.git
+    dest: /opt/app
+    version: master
+  become: yes
+  become_user: centos
+
+- name: install api package.json
+  npm:
+    path: /opt/app/api
+  become: yes
+  become_user: centos
+
+- name: install machinery package.json
+  npm:
+    path: /opt/app/machinery
+  become: yes
+  become_user: centos
+
+- name: install api systemctl service
+  template:
+    src: bw-api.service
+    dest: /etc/systemd/system/bw-api.service
+
+- name: ensure pm2 service is started and enabled
+  systemd:
+    name: bw-api
+    state: started
+    daemon_reload: yes
+    enabled: yes
+
+- name: configure machinery env
+  template:
+    src: machinery.env
+    dest: /opt/app/machinery/.env
+    owner: centos
+    group: centos
+    mode: 0640
+
+- name: set crontab for machinery
+  cron:
+    name: "run machinery"
+    minute: "52"
+    job: "/opt/app/machinery/cron.sh"
+    user: centos

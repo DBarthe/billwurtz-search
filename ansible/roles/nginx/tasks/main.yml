@@ -1,0 +1,98 @@
+---
+- name: install epel-release
+  package:
+    name: epel-release
+    state: present
+
+- name: install nginx
+  package:
+    name: nginx
+    state: latest
+
+- name: install snapd
+  package:
+    name: snapd
+    state: latest
+
+- name: ensure snapd is started
+  systemd:
+    name: snapd
+    state: started
+    daemon_reload: yes
+    enabled: yes
+
+- name: create snap symlink
+  file:
+    src: /var/lib/snapd/snap
+    dest: /snap
+    owner: root
+    group: root
+    state: link
+
+- name: install certbot
+  snap:
+    name: certbot
+    classic: yes
+
+- name: install passlib
+  package:
+    name: python-passlib
+    state: present
+
+- name: configure htpasswd
+  htpasswd:
+    path: /etc/nginx/.htpasswd
+    name: "{{ basic_auth_user }}"
+    password: "{{ basic_auth_password }}"
+    owner: root
+    group: nginx
+    mode: 0640
+
+- name: generate Diffie-Hellman parameters with the default size (4096 bits)
+  openssl_dhparam:
+    path: /etc/ssl/certs/dhparam.pem
+
+
+- name: configure kibana vhost
+  template:
+    src: kibana.conf
+    dest: /etc/nginx/conf.d/kibana.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: configure api vhost
+  template:
+    src: api.conf
+    dest: /etc/nginx/conf.d/api.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: generate kibana certificate
+  command: /var/lib/snapd/snap/bin/certbot certonly --nginx -d {{ kibana_domain }} --agree-tos -m {{ certbot_email }} --non-interactive
+
+- name: generate api certificate
+  command: /var/lib/snapd/snap/bin/certbot certonly --nginx -d {{ api_domain }} --agree-tos -m {{ certbot_email }} --non-interactive
+
+
+- name: set crontab for cert renewal
+  cron:
+    name: "run machinery"
+    special_time: daily
+    job: " /var/lib/snapd/snap/bin/certbot renew --nginx  --non-interactive"
+
+- name: set httpd_can_network_connect flag on and keep it persistent across reboots
+  seboolean:
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
+
+- name: configure nginx systemd service
+  systemd:
+    name: nginx
+    state: started
+    daemon_reload: yes
+    enabled: yes
+
+

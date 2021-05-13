@@ -1,0 +1,2 @@
+[backend]
+bw-qa2 ansible_host="51.178.59.80" ansible_user="centos"

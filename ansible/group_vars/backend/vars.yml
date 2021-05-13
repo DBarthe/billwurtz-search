@@ -1,0 +1,12 @@
+es_version: 7.12.1
+kibana_version: "7.x"
+kibana_server_host: "localhost"
+nodejs_version: "14.x"
+
+basic_auth_user: "{{ vault_basic_auth_user }}"
+basic_auth_password: "{{ vault_basic_auth_password }}"
+certbot_email: "{{ vault_certbot_email }}"
+kibana_domain: "{{ vault_kibana_domain }}"
+api_domain: "{{ vault_api_domain }}"
+telegram_token: "{{ vault_telegram_token }}"
+telegram_chat_id: "{{ vault_telegram_chat_id }}"

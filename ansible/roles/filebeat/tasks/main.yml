@@ -1,0 +1,21 @@
+---
+- name: install filebeat
+  package:
+    name: filebeat
+    state: present
+
+- name: configure filebeat nginx module
+  template:
+    src: nginx.yml
+    dest: /etc/filebeat/modules.d/nginx.yml
+
+- name: configure filebeat systemd service
+  systemd:
+    name: filebeat
+    state: started
+    daemon_reload: yes
+    enabled: yes
+
+# run this only once
+# - name: load dashboard template
+#   command: filebeat setup --dashboards
