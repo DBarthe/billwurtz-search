@@ -135,6 +135,6 @@ app.use("/search", async (req, res) => {
   res.json(esResponse.body);
 });
 
-app.listen(7777, () =>
+app.listen(7777, 'localhost', () =>
   console.log("Server running at http://localhost:7777 🚀")
 );
