@@ -112,7 +112,7 @@ const parseDate = (itemHtml) => {
     day %= 20; // custom fix
   }
 
-  if (year > 2021) {
+  if (year > new Date().getFullYear()) {
     throw Error(`cannot parse date in : ${itemHtml}, match was : ${matchDate}`);
   }
 
